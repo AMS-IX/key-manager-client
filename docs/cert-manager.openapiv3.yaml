@@ -1,0 +1,2523 @@
+openapi: 3.0.3
+info:
+  title: Key Manager Plus API
+  description: |
+    Key Manager Plus APIs allow other applications to connect, interact, and integrate with
+    Key Manager Plus directly. These RESTful APIs enable applications to create, fetch,
+    associate digital keys and add, retrieve or manage users programmatically.
+  version: 1.0.0
+  contact:
+    name: ManageEngine
+    url: https://www.manageengine.com/key-manager/
+
+servers:
+  - url: "https://{host}:{port}/api/pki/restapi"
+    description: Key Manager Plus API Server
+    variables:
+      host:
+        description: The hostname or IP address of Key Manager Plus server
+        default: localhost
+      port:
+        description: The port of Key Manager Plus server
+        default: "6565"
+
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: AUTHTOKEN
+      description: Authentication token generated from the Key Manager Plus user interface
+
+  schemas:
+    ErrorResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          example: Failure
+        message:
+          type: string
+          example: Error message description
+
+    SuccessResponse:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Name of the operation
+        result:
+          type: object
+          properties:
+            status:
+              type: string
+              example: Success
+            message:
+              type: string
+              description: Success message
+
+    SSHKey:
+      type: object
+      properties:
+        KeyName:
+          type: string
+          example: "testkey"
+        KeyType:
+          type: string
+          example: "ssh-rsa"
+        KeyLength:
+          type: string
+          example: "2048"
+        FingerPrint:
+          type: string
+          example: "SHA256:v28/AlRYrpBKjAp4JoTRphLOkFdVb1ummVcyFHSfC5I"
+        isPassphraseAvailable:
+          type: boolean
+          example: false
+        CreatedBy:
+          type: string
+          example: "admin"
+        CreationTime:
+          type: string
+          example: "Today"
+
+    SSHResource:
+      type: object
+      properties:
+        Path:
+          type: string
+          example: "/home"
+        Description:
+          type: string
+          example: "NA"
+        ResourceId:
+          type: integer
+          example: 1
+        ResourceName:
+          type: string
+          example: "pmp-linux.keymanagerplus.com"
+        Port:
+          type: integer
+          example: 22
+        CreationTime:
+          type: string
+          example: "Apr 13, 2023 16:55"
+        IPADDRESS:
+          type: string
+          example: "172.XX.145.XXX"
+        LandingServerName:
+          type: string
+          example: "-"
+
+    SSHUser:
+      type: object
+      properties:
+        UserName:
+          type: string
+          example: "test"
+        ResourceName:
+          type: string
+          example: "172.21.147.80"
+
+    KeyVaultKey:
+      type: object
+      properties:
+        Description:
+          type: string
+          example: "test"
+        "Key Name":
+          type: string
+          example: "cert.cer"
+        "Created Time":
+          type: string
+          example: "Sep 27, 2016 12:27"
+        Datacenter:
+          type: string
+          example: "Central US"
+        "Instance Name":
+          type: string
+          example: "test"
+        "Key Type":
+          type: string
+          example: "test"
+        "Created By":
+          type: string
+          example: "admin"
+        "Key Store ID":
+          type: integer
+          example: 1
+
+    Certificate:
+      type: object
+      properties:
+        CertID:
+          type: integer
+          example: 1
+        "DNS Name/FQDN":
+          type: string
+          example: "example.com"
+        Port:
+          type: integer
+          example: 443
+        "Common Name":
+          type: string
+          example: "*.example.com"
+        Issuer:
+          type: string
+          example: "GeoTrust Inc."
+        FromDate:
+          type: string
+          example: "Oct 13, 2020"
+        ExpiryDate:
+          type: string
+          example: "Aug 27, 2022"
+        KeyStrength:
+          type: string
+          example: "2048"
+        SignatureAlgorithm:
+          type: string
+          example: "SHA256withRSA"
+        "Created By":
+          type: string
+          example: "admin"
+        "Expiry Notification Email":
+          type: string
+          example: ""
+        Description:
+          type: string
+          example: "Test certificate"
+
+    CertificateDetails:
+      type: object
+      properties:
+        certtype:
+          type: string
+          example: "Domain"
+        certificateTemplate:
+          type: string
+          example: "N/A"
+        endpoint:
+          type: object
+          properties:
+            hostName:
+              type: string
+              example: "*.example.com"
+            port:
+              type: string
+              example: "443"
+            expiry_date:
+              type: string
+              example: "2022-04-30 05:29:59.0"
+            from_date:
+              type: string
+              example: "2020-07-02 05:30:00.0"
+            certSignAlg:
+              type: string
+              example: "SHA256withRSA"
+            Sans:
+              type: string
+              example: "*.example.com,example.com"
+            serial:
+              type: string
+              example: "8c0b04e91a1796d86d1de5e89c8b3c5c"
+            fingerPrint:
+              type: string
+              example: "aeecb6227dc8adef18a8fb99465739996e2782a8"
+            keyalg:
+              type: string
+              example: "RSA"
+            PublicKeyLength:
+              type: integer
+              example: 2048
+            PrivateKey:
+              type: boolean
+              example: false
+            isAWS:
+              type: boolean
+              example: false
+        isCertInstalledMulipleServers:
+          type: boolean
+          example: false
+        issuer:
+          type: object
+          properties:
+            cname:
+              type: string
+              example: "Sectigo RSA Domain Validation Secure Server CA"
+            org:
+              type: string
+              example: "Sectigo Limited"
+            orgunit:
+              type: string
+              example: "-"
+        issuedto:
+          type: object
+          properties:
+            cname:
+              type: string
+              example: "*.example.com"
+            org:
+              type: string
+              example: "-"
+            orgunit:
+              type: string
+              example: "Domain Control Validated"
+        intermediate:
+          type: object
+        ipaddress:
+          type: string
+          example: "192.168.1.1"
+        CertificateId:
+          type: string
+          example: "302"
+
+    CSR:
+      type: object
+      properties:
+        CREATED_BY:
+          type: string
+          example: "admin"
+        KEYALGORITHM:
+          type: string
+          example: "RSA"
+        KEYSTORE_TYPE:
+          type: string
+          example: "JKS"
+        isPassword:
+          type: boolean
+          example: true
+        CSR_ID:
+          type: integer
+          example: 1
+        CREATED_DATE:
+          type: string
+          example: "May 15, 2020 19:51"
+        LOGIN_ID:
+          type: integer
+          example: 301
+        KEY_STRENGTH:
+          type: integer
+          example: 2048
+        DOMAIN_NAME:
+          type: string
+          example: "testcsr"
+        VALIDITY:
+          type: string
+          example: "30"
+        SIGNATURE_ALGORITHM:
+          type: string
+          example: "SHA256withRSA"
+
+    CertificatePassphrase:
+      type: object
+      properties:
+        result:
+          type: object
+          properties:
+            message:
+              type: string
+              example: "Private key passphrase of certificate mycert is fetched"
+            status:
+              type: string
+              example: "Success"
+        name:
+          type: string
+          example: "GetCertificatePassphrase"
+        details:
+          type: object
+          properties:
+            Passphrase:
+              type: string
+              example: "SamplePassphrase"
+
+    CertificateExpiryList:
+      type: object
+      properties:
+        name:
+          type: string
+          example: "GetAllSSLCertificatesExpiryDate"
+        result:
+          type: object
+          properties:
+            status:
+              type: string
+              example: "Success"
+            message:
+              type: string
+              example: "Certificates expiry date fetched successfully"
+        totalRows:
+          type: integer
+          example: 2
+        details:
+          type: array
+          items:
+            type: object
+            properties:
+              "Common Name":
+                type: string
+                example: "*.example.com"
+              ExpiryDate:
+                type: string
+                example: "Aug 27, 2022"
+
+    AuditDetails:
+      type: object
+      properties:
+        OPERATION:
+          type: string
+          example: "REST API"
+        DESCRIPTION:
+          type: string
+          example: "All Audit data fetched successfully."
+        AUDITID:
+          type: integer
+          example: 902
+        USERNAME:
+          type: string
+          example: "admin"
+        TIME:
+          type: string
+          example: "Apr 18, 2023 13:25"
+
+    SSLVulnerabilityCount:
+      type: object
+      properties:
+        result:
+          type: object
+          properties:
+            message:
+              type: string
+              example: "SSL vulnerability data fetched successfully."
+            status:
+              type: string
+              example: "Success"
+        name:
+          type: string
+          example: "GetSSLVulnerabilityCount"
+        details:
+          type: object
+          properties:
+            SSLVulnerabilityCount:
+              type: object
+              properties:
+                "Weak Cipher Suites":
+                  type: integer
+                  example: 0
+                "Poodle SSL":
+                  type: integer
+                  example: 0
+                Revoked:
+                  type: integer
+                  example: 0
+                "SSLv3 Enabled":
+                  type: integer
+                  example: 0
+                "No TLS1.2":
+                  type: integer
+                  example: 1
+                Heartbleed:
+                  type: integer
+                  example: 0
+
+security:
+  - ApiKeyAuth: []
+
+paths:
+  # 1. Create SSH Key
+  /createsshkey:
+    post:
+      summary: Create a new SSH key
+      description: Creates a new SSH key with the specified parameters
+      operationId: createSSHKey
+      parameters:
+        - name: INPUT_DATA
+          in: query
+          required: true
+          schema:
+            type: string
+          description: JSON string containing SSH key details
+          example: '{"operation":{"Details":{"keyName":"keytest","passPhrase":"passPhrase","comment":"comment","length":"2048","keyType":"ssh-rsa"}}}'
+      responses:
+        "200":
+          description: SSH key created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  name:
+                    type: string
+                    example: "CreateSSHKey"
+                  result:
+                    type: object
+                    properties:
+                      status:
+                        type: string
+                        example: "Success"
+                      message:
+                        type: string
+                        example: "New SSH key created successfully"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  # 2. Update Credentials
+  /applycredentials:
+    post:
+      summary: Update Credentials
+      description: Update credentials for the discovered resources
+      operationId: applyCredentials
+      parameters:
+        - name: INPUT_DATA
+          in: query
+          required: true
+          schema:
+            type: string
+          description: JSON string containing credential details
+          example: '{"operation":{"Details":{"userName":"test3","password":"test3","resourceName":"172.21.147.80","isAdmin":"false"}}}'
+      responses:
+        "200":
+          description: Credentials updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  name:
+                    type: string
+                    example: "ApplyCredentials"
+                  result:
+                    type: object
+                    properties:
+                      status:
+                        type: string
+                        example: "Success"
+                      message:
+                        type: string
+                        example: "Credentials updated successfully"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  # 3. Fetch all SSH Resources
+  /getAllSSHResourceDetails:
+    get:
+      summary: Get All SSH Resources
+      description: Fetches all the SSH resources
+      operationId: getAllSSHResourceDetails
+      responses:
+        "200":
+          description: SSH resources fetched successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  name:
+                    type: string
+                    example: "GetAllSSHResources"
+                  result:
+                    type: object
+                    properties:
+                      status:
+                        type: string
+                        example: "Success"
+                      message:
+                        type: string
+                        example: "All SSH Resources fetched successfully."
+                  totalRows:
+                    type: integer
+                    example: 2
+                  details:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/SSHResource"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  # 4. Fetch all SSH Keys
+  /getAllSSHKeys:
+    get:
+      summary: Get All SSH Keys
+      description: Fetches all the discovered SSH keys
+      operationId: getAllSSHKeys
+      responses:
+        "200":
+          description: SSH keys fetched successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  name:
+                    type: string
+                    example: "GetAllSSHKeys"
+                  result:
+                    type: object
+                    properties:
+                      status:
+                        type: string
+                        example: "Success"
+                      message:
+                        type: string
+                        example: "All SSH Keys fetched successfully"
+                  totalRows:
+                    type: integer
+                    example: 1
+                  details:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/SSHKey"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  # 5. Fetch Particular SSH Key
+  /getSSHKey:
+    post:
+      summary: Get SSH Key
+      description: Fetches a particular SSH key from the discovered keys
+      operationId: getSSHKey
+      parameters:
+        - name: INPUT_DATA
+          in: query
+          required: true
+          schema:
+            type: string
+          description: JSON string containing SSH key name
+          example: '{"operation":{"Details":{"keyName":"key"}}}'
+      responses:
+        "200":
+          description: SSH key fetched successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  name:
+                    type: string
+                    example: "GetSSHKey"
+                  result:
+                    type: object
+                    properties:
+                      status:
+                        type: string
+                        example: "Success"
+                      message:
+                        type: string
+                        example: "SSH Key testkey fetched successfully"
+                  details:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/SSHKey"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  # 6. Export SSH Key
+  /exportSSHKey:
+    post:
+      summary: Export SSH Key
+      description: Exports a particular SSH key
+      operationId: exportSSHKey
+      parameters:
+        - name: INPUT_DATA
+          in: query
+          required: true
+          schema:
+            type: string
+          description: JSON string containing SSH key name and optional export type
+          example: '{"operation":{"Details":{"keyName":"key","keyExportType":"public"}}}'
+      responses:
+        "200":
+          description: SSH key file
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  # 7. Get SSH Key Passphrase
+  /getSSHKeyPassphrase:
+    get:
+      summary: Get SSH Key Passphrase
+      description: Gets the passphrase of an SSH key
+      operationId: getSSHKeyPassphrase
+      parameters:
+        - name: INPUT_DATA
+          in: query
+          required: true
+          schema:
+            type: string
+          description: JSON string containing SSH key name
+          example: '{"operation":{"Details":{"keyName":"testKey"}}}'
+      responses:
+        "200":
+          description: SSH key passphrase fetched successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: object
+                    properties:
+                      message:
+                        type: string
+                        example: "Passphrase fetched successfully"
+                      status:
+                        type: string
+                        example: "Success"
+                  name:
+                    type: string
+                    example: "GetSSHKeyPassphrase"
+                  details:
+                    type: object
+                    properties:
+                      passphrase:
+                        type: string
+                        example: "passphrase@321"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  # 9. Get SSH Keys for a User
+  /getSSHkeysforuser:
+    get:
+      summary: Get SSH Keys for User
+      description: Gets all the SSH keys associated with a particular user
+      operationId: getSSHKeysForUser
+      parameters:
+        - name: INPUT_DATA
+          in: query
+          required: true
+          schema:
+            type: string
+          description: JSON string containing user name and resource name
+          example: '{"operation":{"Details":{"userName":"test","resourceName":"172.21.147.80"}}}'
+      responses:
+        "200":
+          description: SSH keys for user fetched successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  name:
+                    type: string
+                    example: "GetSSHKeysForUser"
+                  result:
+                    type: object
+                    properties:
+                      status:
+                        type: string
+                        example: "Success"
+                      message:
+                        type: string
+                        example: "SSH keys for user test of resource pmp-centos6 fetched successfully"
+                  details:
+                    type: string
+                    example: "testkey,testkey1"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  # 10. Enumerate all Users
+  /enumerateusers:
+    post:
+      summary: Enumerate Users
+      description: Enumerates all users in a particular resource
+      operationId: enumerateUsers
+      parameters:
+        - name: INPUT_DATA
+          in: query
+          required: true
+          schema:
+            type: string
+          description: JSON string containing user name and resource name
+          example: '{"operation":{"Details":{"userName":"test","resourceName":"172.21.147.80"}}}'
+      responses:
+        "200":
+          description: User enumeration started
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  name:
+                    type: string
+                    example: "EnumerateUsers"
+                  result:
+                    type: object
+                    properties:
+                      status:
+                        type: string
+                        example: "Success"
+                      message:
+                        type: string
+                        example: "User enumeration started"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  # 11. Get all SSH Users
+  /getAllSSHUsers:
+    get:
+      summary: Get All SSH Users
+      description: Gets all the discovered SSH users
+      operationId: getAllSSHUsers
+      responses:
+        "200":
+          description: SSH users fetched successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  name:
+                    type: string
+                    example: "GetAllSSHUsers"
+                  result:
+                    type: object
+                    properties:
+                      status:
+                        type: string
+                        example: "Success"
+                      message:
+                        type: string
+                        example: "All SSH Users fetched successfully"
+                  totalRows:
+                    type: integer
+                    example: 2
+                  details:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/SSHUser"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  # 12. Fetch all Associated Users
+  /getAllAssociatedUsers:
+    get:
+      summary: Get All Associated Users
+      description: Fetches all the users associated with SSH keys
+      operationId: getAllAssociatedUsers
+      responses:
+        "200":
+          description: Associated users fetched successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: object
+                    properties:
+                      status:
+                        type: string
+                        example: "Success"
+                      message:
+                        type: string
+                        example: "All associated users fetched successfully"
+                  totalRows:
+                    type: integer
+                    example: 1
+                  details:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/SSHUser"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  # 13. Get all Key Vault Keys
+  /getAllKeyStoreKeys:
+    get:
+      summary: Get All Key Vault Keys
+      description: Fetches all the keys from the key vault
+      operationId: getAllKeyStoreKeys
+      responses:
+        "200":
+          description: Key vault keys fetched successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  name:
+                    type: string
+                    example: "getAllKeyStoreKeys"
+                  result:
+                    type: object
+                    properties:
+                      status:
+                        type: string
+                        example: "Success"
+                      message:
+                        type: string
+                        example: "All KeyStore Keys fetched successfully"
+                  totalRows:
+                    type: integer
+                    example: 1
+                  details:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/KeyVaultKey"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  # 14. Export Key Vault Key
+  /exportKeyStoreKey:
+    post:
+      summary: Export Key Vault Key
+      description: Exports a particular key from the key vault
+      operationId: exportKeyStoreKey
+      parameters:
+        - name: INPUT_DATA
+          in: query
+          required: true
+          schema:
+            type: string
+          description: JSON string containing key name
+          example: '{"operation":{"Details":{"keyName":"cert.cer"}}}'
+      responses:
+        "200":
+          description: Key file
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  # 15. Delete Key Vault Key
+  /deleteKeyStoreKey:
+    delete:
+      summary: Delete Key Vault Key
+      description: Deletes a key from the key vault
+      operationId: deleteKeyStoreKey
+      parameters:
+        - name: INPUT_DATA
+          in: query
+          required: true
+          schema:
+            type: string
+          description: JSON string containing key name
+          example: '{"operation":{"Details":{"keyName":"cert.cer"}}}'
+      responses:
+        "200":
+          description: Key deleted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  name:
+                    type: string
+                    example: "DeleteKeyStoreKey"
+                  result:
+                    type: object
+                    properties:
+                      status:
+                        type: string
+                        example: "Success"
+                      message:
+                        type: string
+                        example: "Key Store keys deleted successfully"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  # 16. Add Key Vault Key
+  /addKeyStoreKey:
+    post:
+      summary: Add Key Vault Key
+      description: Adds a new key to the key vault
+      operationId: addKeyStoreKey
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                INPUT_DATA:
+                  type: string
+                  description: JSON string containing key details
+                  example: '{"operation":{"Details":{"keyName":"brin.cer","description":"test","datacenter":"test","passphrase":"test","keyType":"test","instanceName":"test"}}}'
+                File:
+                  type: string
+                  format: binary
+                  description: Key file to upload
+      responses:
+        "200":
+          description: Key added successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  Status:
+                    type: string
+                    example: "Success"
+                  Message:
+                    type: string
+                    example: "Key added to key store successfully"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  # 17. Update Key Vault Key
+  /updateKeyStoreKey:
+    post:
+      summary: Update Key Vault Key
+      description: Updates a particular key vault key
+      operationId: updateKeyStoreKey
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                INPUT_DATA:
+                  type: string
+                  description: JSON string containing key details
+                  example: '{"operation":{"Details":{"keyName":"brin.cer","description":"test","datacenter":"test","passphrase":"test","keyType":"test","instanceName":"test"}}}'
+                File:
+                  type: string
+                  format: binary
+                  description: Key file to upload
+      responses:
+        "200":
+          description: Key updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  Status:
+                    type: string
+                    example: "Success"
+                  Message:
+                    type: string
+                    example: "Key Store key updated successfully"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  # 18. Get Certificate
+  /getCertificate:
+    get:
+      summary: Get Certificate
+      description: Obtains a certificate from KMP's certificate repository
+      operationId: getCertificate
+      parameters:
+        - name: INPUT_DATA
+          in: query
+          required: true
+          schema:
+            type: string
+          description: JSON string containing operation details
+          example: '{"operation":{"Details":{"common_name":"*.google.com","serial_number":"XXXXXXXXXXXXXX","fileType":"PEM"}}}'
+      responses:
+        "200":
+          description: Certificate file
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  # 20. Get All Certificates
+  /getAllSSLCertificates:
+    get:
+      summary: Get All Certificates
+      description: Obtains all certificates from KMP's certificate repository with optional filters
+      operationId: getAllSSLCertificates
+      parameters:
+        - name: INPUT_DATA
+          in: query
+          required: false
+          schema:
+            type: string
+          description: JSON string containing filter parameters
+          example: '{"operation":{"Details":{"withExpiryDaysLessThan":"500","withKeyLength":"2048","withSignatureAlgorithm":"SHA256","withPrivateKey":"true"}}}'
+      responses:
+        "200":
+          description: List of certificates
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  name:
+                    type: string
+                    example: "GetAllSSLCertificates"
+                  result:
+                    type: object
+                    properties:
+                      status:
+                        type: string
+                        example: "Success"
+                      message:
+                        type: string
+                        example: "All SSL Certificates fetched successfully"
+                  totalRows:
+                    type: integer
+                    example: 2
+                  details:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Certificate"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  # 21. Get All Certificate Expiry
+  /getAllSSLCertsExpiryDate:
+    get:
+      summary: Get All Certificate Expiry
+      description: Get the expiry dates of all the certificates
+      operationId: getAllSSLCertsExpiryDate
+      responses:
+        "200":
+          description: Certificate expiry list
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CertificateExpiryList"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  # 22. Get Certificate Details
+  /getCertificateDetails:
+    get:
+      summary: Get Certificate Details
+      description: Get the details of a particular certificate
+      operationId: getCertificateDetails
+      parameters:
+        - name: INPUT_DATA
+          in: query
+          required: true
+          schema:
+            type: string
+          description: JSON string containing operation details
+          example: '{"operation":{"Details":{"common_name":"*.google.com","serial_number":"xxxxxxxxxxxx"}}}'
+      responses:
+        "200":
+          description: Certificate details
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  name:
+                    type: string
+                    example: "GetCertificateDetails"
+                  result:
+                    type: object
+                    properties:
+                      status:
+                        type: string
+                        example: "Success"
+                      message:
+                        type: string
+                        example: "Details of certificate *.zoho.com fetched successfully"
+                  details:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/CertificateDetails"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  # 23. Get Certificate Keystore
+  /getCertificateKeyStore:
+    get:
+      summary: Get Certificate Keystore
+      description: Get the key store file of a particular certificate
+      operationId: getCertificateKeyStore
+      parameters:
+        - name: INPUT_DATA
+          in: query
+          required: true
+          schema:
+            type: string
+          description: JSON string containing operation details
+          example: '{"operation":{"Details":{"common_name":"apitest","serial_number":"XXXXXXXXXXXXXX"}}}'
+      responses:
+        "200":
+          description: Certificate KeyStore file
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  # 24. Update Certificate
+  /updateSSLCertificateDetails:
+    post:
+      summary: Update Certificate
+      description: Update an SSL certificate in the KMP repository
+      operationId: updateSSLCertificateDetails
+      parameters:
+        - name: INPUT_DATA
+          in: query
+          required: true
+          schema:
+            type: string
+          description: JSON string containing update details
+          example: '{"operation":{"Details":{"common_name":"apitest","serial_number":"XXXXXXe433d","description":"testdescription","dns_name":"dnsname","email_address":"test@example.com","isAutoDeploy":"true","sslAdditionalFieldData":[{"ADDITIONALFIELDNAME":"Owner Name","ADDITIONALFIELDVALUE":"John"},{"ADDITIONALFIELDNAME":"dropdown","ADDITIONALFIELDVALUE":"option2"}]}}}'
+      responses:
+        "200":
+          description: Update success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: object
+                    properties:
+                      message:
+                        type: string
+                        example: "SSL Certificate apitest details updated successfully."
+                      status:
+                        type: string
+                        example: "Success"
+                  name:
+                    type: string
+                    example: "updateSslDetails"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  # 25. Delete Certificate
+  /deleteCertificate:
+    delete:
+      summary: Delete Certificate
+      description: Delete an SSL certificate from the KMP repository
+      operationId: deleteCertificate
+      parameters:
+        - name: INPUT_DATA
+          in: query
+          required: true
+          schema:
+            type: string
+          description: JSON string containing certificate details
+          example: '{"operation": {"Details":{"common_name":"apitest","serial_number":"XXXXXXXccda","exclude_certificate":"true","reason":"Test"}}}'
+      responses:
+        "200":
+          description: Delete success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: object
+                    properties:
+                      message:
+                        type: string
+                        example: "Certificate apitest deleted successfully."
+                      status:
+                        type: string
+                        example: "Success"
+                  name:
+                    type: string
+                    example: "DeleteCertificate"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  # 26. Perform Resource Discovery
+  /sslCertSingleDiscovery:
+    post:
+      summary: Perform Resource Discovery
+      description: Discover a particular resource for SSL certificates
+      operationId: sslCertSingleDiscovery
+      parameters:
+        - name: INPUT_DATA
+          in: query
+          required: true
+          schema:
+            type: string
+          description: JSON string containing host details
+          example: '{"operation":{"Details":{"HOST":"hostname","TIMEOUT":"300","PORT":"6565"}}}'
+      responses:
+        "200":
+          description: Discovery result
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  name:
+                    type: string
+                    example: "Get SSL Discovery"
+                  totalRows:
+                    type: integer
+                    example: 1
+                  details:
+                    type: object
+                    additionalProperties:
+                      type: array
+                      items:
+                        type: string
+                      example:
+                        [
+                          "SUCCESS",
+                          "SSL Certificate already available, *.zoho.com certificate found at port 443",
+                        ]
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  # 27. Perform Resource Discovery for IP Range
+  /sslCertRangeDiscovery:
+    post:
+      summary: Perform Resource Discovery for IP Range
+      description: Discover a set of resources for SSL certificates based on IP range
+      operationId: sslCertRangeDiscovery
+      parameters:
+        - name: INPUT_DATA
+          in: query
+          required: true
+          schema:
+            type: string
+          description: JSON string containing IP range details
+          example: '{"operation":{"Details":{"StartIpAddress":"192.168.216.0","EndIpAddress":"192.168.216.3","TIMEOUT":"3","PORT":"443"}}}'
+      responses:
+        "200":
+          description: Discovery result
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  name:
+                    type: string
+                    example: "Get SSL Discovery"
+                  totalRows:
+                    type: integer
+                    example: 4
+                  details:
+                    type: object
+                    additionalProperties:
+                      type: array
+                      items:
+                        type: string
+                      example:
+                        [
+                          "FAILURE",
+                          "Connection timed out,no certificate found at port 443",
+                        ]
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  # 28. Discover SSL in Bulk from Files
+  /sslCertFileBasedDiscovery:
+    post:
+      summary: Discover SSL in Bulk from Files
+      description: Perform SSL discovery in bulk from files
+      operationId: sslCertFileBasedDiscovery
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                INPUT_DATA:
+                  type: string
+                  description: JSON string containing file details
+                  example: '{"operation":{"Details":{"FileName":"sslDiscoveryInputFile.txt","TIMEOUT":"3","PORT":443}}}'
+                File:
+                  type: string
+                  format: binary
+                  description: File containing hosts to discover
+      responses:
+        "200":
+          description: Discovery result
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: object
+                    properties:
+                      message:
+                        type: string
+                        example: "SSL discovery completed successfully"
+                      status:
+                        type: string
+                        example: "Success"
+                  name:
+                    type: string
+                    example: "Get SSL Discovery"
+                  details:
+                    type: object
+                    additionalProperties:
+                      type: array
+                      items:
+                        type: string
+                      example:
+                        [
+                          "FAILURE",
+                          "Connection timed out,no certificate found at port 443",
+                        ]
+                  totalRows:
+                    type: integer
+                    example: 3
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  # 29. Create CSR
+  /createCSR:
+    post:
+      summary: Create CSR
+      description: Create a certificate signing request
+      operationId: createCSR
+      parameters:
+        - name: INPUT_DATA
+          in: query
+          required: true
+          schema:
+            type: string
+          description: JSON string containing CSR details
+          example: '{"operation":{"Details":{"CNAME":"mytestcert","ALT_NAMES":"test","ORGUNIT":"hhh","ORG":"h","LOCATION":"hh","STATE":"h","COUNTRY":"hh","PASSWORD":"bbbbbbbb","VALIDITY_TYPE":"88","VALIDITY":"888","ALG":"RSA","LEN":"4096","SIGALG":"SHA256","StoreType":"PKCS12"}}}'
+      responses:
+        "200":
+          description: CSR created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  name:
+                    type: string
+                    example: "CreateCertificate"
+                  result:
+                    type: object
+                    properties:
+                      status:
+                        type: string
+                        example: "Success"
+                      message:
+                        type: string
+                        example: "CSR saved successfully"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  # 30. Get CSR List
+  /getCSRList:
+    get:
+      summary: Get CSR List
+      description: Get list of certificate signing requests
+      operationId: getCSRList
+      responses:
+        "200":
+          description: CSR list fetched successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  name:
+                    type: string
+                    example: "GetCSRList"
+                  result:
+                    type: object
+                    properties:
+                      status:
+                        type: string
+                        example: "Success"
+                      message:
+                        type: string
+                        example: "Fetched all CSRs successfully"
+                  totalRows:
+                    type: integer
+                    example: 1
+                  GeneratedList:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/CSR"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  # 31. Import CSR
+  /importCSR:
+    post:
+      summary: Import CSR
+      description: Import the list of CSRs available in the request list
+      operationId: importCSR
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                CSR:
+                  type: string
+                  format: binary
+                  description: CSR file to import
+                Key:
+                  type: string
+                  format: binary
+                  description: Key file (optional)
+                INPUT_DATA:
+                  type: string
+                  description: JSON string containing import details
+                  example: '{"operation":{"Details":{"password":"Test@123","Email":"test@mail.com"}}}'
+      responses:
+        "200":
+          description: CSR imported successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: object
+                    properties:
+                      message:
+                        type: string
+                        example: "CSR demo.test.com imported successfully."
+                      status:
+                        type: string
+                        example: "Success"
+                  name:
+                    type: string
+                    example: "importCSR"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  # 32. Sign CSR
+  /signCSR:
+    post:
+      summary: Sign CSR
+      description: Sign a certificate signing request
+      operationId: signCSR
+      parameters:
+        - name: INPUT_DATA
+          in: query
+          required: true
+          schema:
+            type: string
+          description: JSON string containing signing details
+          example: '{"operation":{"Details":{"serverName":"kmp-w12r2-1","caName":"kmp-w12r2-1-ca","templateName":"DomainController","CSR_ID":"1"}}}'
+      responses:
+        "200":
+          description: CSR signed successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: object
+                    properties:
+                      message:
+                        type: string
+                        example: "Certificate csr successfully signed with test."
+                      status:
+                        type: string
+                        example: "Success"
+                  name:
+                    type: string
+                    example: "SignCSR"
+                  details:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        commonName:
+                          type: string
+                          example: "test"
+                        Certificate_ID:
+                          type: integer
+                          example: 3301
+                        serialNumber:
+                          type: string
+                          example: "bd865c93"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  # 33. Export CSR
+  /exportCSR:
+    get:
+      summary: Export CSR
+      description: Export a CSR from the Key Manager Plus repository
+      operationId: exportCSR
+      parameters:
+        - name: INPUT_DATA
+          in: query
+          required: true
+          schema:
+            type: string
+          description: JSON string containing CSR ID and file type
+          example: '{"operation":{"Details":{"CSR_ID":"304","fileType":"CSR"}}}'
+      responses:
+        "200":
+          description: CSR file
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  # 34. Create Certificate
+  /createCertificate:
+    post:
+      summary: Create Certificate
+      description: Create an SSL certificate
+      operationId: createCertificate
+      parameters:
+        - name: INPUT_DATA
+          in: query
+          required: true
+          schema:
+            type: string
+          description: JSON string containing certificate details
+          example: '{"operation":{"Details":{"CNAME":"mytestcert","ALT_NAMES":"test","ORGUNIT":"hhh","ORG":"h","LOCATION":"hh","STATE":"h","COUNTRY":"hh","PASSWORD":"bbbbbbbb","VALIDITY_TYPE":"88","VALIDITY":"888","ALG":"RSA","LEN":"4096","SIGALG":"SHA256","StoreType":"PKCS12"}}}'
+      responses:
+        "200":
+          description: Certificate created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: object
+                    properties:
+                      message:
+                        type: string
+                        example: "Certificate saved successfully"
+                      status:
+                        type: string
+                        example: "Success"
+                  name:
+                    type: string
+                    example: "CreateCertificate"
+                  details:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        SSL_RESOURCEID:
+                          type: integer
+                          example: 3
+                  totalRows:
+                    type: integer
+                    example: 1
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  # 35. Import SSH Key
+  /addSSHKey:
+    post:
+      summary: Import SSH Key
+      description: Import a SSH key
+      operationId: addSSHKey
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                INPUT_DATA:
+                  type: string
+                  description: JSON string containing SSH key details
+                  example: '{"operation":{"Details":{"keyName":"testkey","passphrase":"passtrix"}}}'
+                File:
+                  type: string
+                  format: binary
+                  description: SSH key file to import
+      responses:
+        "200":
+          description: SSH key imported successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  name:
+                    type: string
+                    example: "addSSHKey"
+                  result:
+                    type: object
+                    properties:
+                      status:
+                        type: string
+                        example: "SUCCESS"
+                      message:
+                        type: string
+                        example: "Key imported successfully"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  # 36. Associate SSH Key
+  /associateKey:
+    post:
+      summary: Associate SSH Key
+      description: Associate a SSH key with a user and resource
+      operationId: associateKey
+      parameters:
+        - name: INPUT_DATA
+          in: query
+          required: true
+          schema:
+            type: string
+          description: JSON string containing association details
+          example: '{"operation":{"Details":{"keyName":"testkey","resourceName":"test.csez.zohocorpin.com","userName":"test"}}}'
+      responses:
+        "200":
+          description: SSH key associated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  name:
+                    type: string
+                    example: "associateKey"
+                  result:
+                    type: object
+                    properties:
+                      status:
+                        type: string
+                        example: "Success"
+                      message:
+                        type: string
+                        example: "Key associated successfully"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  # 37. Dissociate SSH Key
+  /dissociateKey:
+    post:
+      summary: Dissociate SSH Key
+      description: Dissociate a SSH key from a user and resource
+      operationId: dissociateKey
+      parameters:
+        - name: INPUT_DATA
+          in: query
+          required: true
+          schema:
+            type: string
+          description: JSON string containing dissociation details
+          example: '{"operation":{"Details":{"keyName":"testkey","resourceName":"test.csez.zohocorpin.com","userName":"test"}}}'
+      responses:
+        "200":
+          description: SSH key dissociated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  name:
+                    type: string
+                    example: "dissociateKey"
+                  result:
+                    type: object
+                    properties:
+                      status:
+                        type: string
+                        example: "SUCCESS"
+                      message:
+                        type: string
+                        example: "Key dissociated successfully."
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  # 38. Add Certificate
+  /addCertificate:
+    post:
+      summary: Add Certificate
+      description: Add an SSL certificate to Key Manager Plus certificate repository
+      operationId: addCertificate
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                INPUT_DATA:
+                  type: string
+                  description: JSON string containing certificate details
+                  example: '{"operation":{"Details":{"fileType":"KEYSTORE","PASSWORD":"PASSWORD"}}}'
+                File:
+                  type: string
+                  format: binary
+                  description: Certificate file to add
+      responses:
+        "200":
+          description: Certificate added successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  name:
+                    type: string
+                    example: "AddCertificate"
+                  result:
+                    type: object
+                    properties:
+                      Status:
+                        type: string
+                        example: "Success"
+                      Message:
+                        type: string
+                        example: "Certificate newcert.com added successfully"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  # 39. Deploy Certificate
+  /deployCertificate:
+    post:
+      summary: Deploy Certificate
+      description: Deploy an SSL certificate
+      operationId: deployCertificate
+      parameters:
+        - name: INPUT_DATA
+          in: query
+          required: true
+          schema:
+            type: string
+          description: JSON string containing deployment details
+          example: '{"operation":{"Details":{"common_name":"testcert","serial_number":"xxxxxxxx","serverName":"testmachine"}}}'
+      responses:
+        "200":
+          description: Certificate deployed successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: object
+                    properties:
+                      message:
+                        type: string
+                        example: "Certificate deployment is successful."
+                      status:
+                        type: string
+                        example: "Success"
+                  name:
+                    type: string
+                    example: "DeployCertificate"
+                  totalRows:
+                    type: integer
+                    example: 1
+                  deployStatus:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        server:
+                          type: string
+                          example: "testmachine"
+                        message:
+                          type: string
+                          example: "Certificate testcert of format CER and PFX deployed in testmachine successfully."
+                        status:
+                          type: string
+                          example: "Success"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  # 40. Delete SSH Key
+  /deleteSSHKey:
+    delete:
+      summary: Delete SSH Key
+      description: Delete a particular SSH key
+      operationId: deleteSSHKey
+      parameters:
+        - name: INPUT_DATA
+          in: query
+          required: true
+          schema:
+            type: string
+          description: JSON string containing key name and disassociation flag
+          example: '{"operation":{"Details":{"key_name":"newkey1","withoutDisassociation":"true"}}}'
+      responses:
+        "200":
+          description: SSH key deleted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  name:
+                    type: string
+                    example: "DeleteSSHKey"
+                  result:
+                    type: object
+                    properties:
+                      status:
+                        type: string
+                        example: "Success"
+                      message:
+                        type: string
+                        example: "SSH keys newkey1 deleted successfully"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  # 41. Get Certificate Private Key Passphrase
+  /getCertificatePassphrase:
+    get:
+      summary: Get Certificate Private Key Passphrase
+      description: Get the passphrase of a certificate private key
+      operationId: getCertificatePassphrase
+      parameters:
+        - name: INPUT_DATA
+          in: query
+          required: true
+          schema:
+            type: string
+          description: JSON string containing certificate details
+          example: '{"operation":{"Details":{"common_name":"mycert","serial_number":"XXXXXXXXXXXXXX"}}}'
+      responses:
+        "200":
+          description: Certificate passphrase fetched successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CertificatePassphrase"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  # 42. Fetch PGP Keys
+  /getPGPKey:
+    get:
+      summary: Fetch PGP Keys
+      description: Fetch public or private PGP keys
+      operationId: getPGPKey
+      parameters:
+        - name: INPUT_DATA
+          in: query
+          required: true
+          schema:
+            type: string
+          description: JSON string containing PGP key details
+          example: '{"operation":{"Details":{"User":"test (test) <tes@test.com>","keyExportType":"public"}}}'
+      responses:
+        "200":
+          description: PGP key file
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  # 43. Fetch all Audit Details
+  /getAuditDetails:
+    get:
+      summary: Fetch All Audit Details
+      description: Get all the audit details
+      operationId: getAuditDetails
+      responses:
+        "200":
+          description: Audit details fetched successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: object
+                    properties:
+                      message:
+                        type: string
+                        example: "All Audit data fetched successfully."
+                      status:
+                        type: string
+                        example: "Success"
+                  name:
+                    type: string
+                    example: "GetAllAudits"
+                  details:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/AuditDetails"
+                  totalRows:
+                    type: integer
+                    example: 1
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  # 44. Get SSL Vulnerabilities Count
+  /getSSLVulnerabilityCount:
+    get:
+      summary: Get SSL Vulnerabilities Count
+      description: Get the total number of SSL vulnerabilities
+      operationId: getSSLVulnerabilityCount
+      responses:
+        "200":
+          description: SSL vulnerability count fetched successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SSLVulnerabilityCount"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  # 45. Revoke MSCA Certificate
+  /revokeMSCACertificate:
+    post:
+      summary: Revoke MSCA Certificate
+      description: Revoke a MSCA certificate
+      operationId: revokeMSCACertificate
+      parameters:
+        - name: INPUT_DATA
+          in: query
+          required: true
+          schema:
+            type: string
+          description: JSON string containing revocation details
+          example: '{"operation":{"Details":{"common_name":"test3","serial_number":"12345","revoke_reason":1}}}'
+      responses:
+        "200":
+          description: Certificate revoked successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: object
+                    properties:
+                      message:
+                        type: string
+                        example: "Certificate manageengine.com revoked successfully with reason Certificate hold."
+                      status:
+                        type: string
+                        example: "Success"
+                  name:
+                    type: string
+                    example: "RevokeMSCACertificate"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  # 46. Fetch Unmanaged Certificates from Load Balancer or Shared Path
+  /getUnmanagedCertList:
+    get:
+      summary: Fetch Unmanaged Certificates
+      description: Fetch the discovered and unmanaged certificates of format JKS/PKCS from a load balancer or shared path
+      operationId: getUnmanagedCertList
+      parameters:
+        - name: INPUT_DATA
+          in: query
+          required: true
+          schema:
+            type: string
+          description: JSON string containing type details
+          example: '{"operation":{"Details":{"type":"loadbalancer"}}}'
+      responses:
+        "200":
+          description: Unmanaged certificates fetched successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: object
+                    properties:
+                      message:
+                        type: string
+                        example: "Data fetched from the repository"
+                      status:
+                        type: string
+                        example: "Success"
+                  name:
+                    type: string
+                    example: "getUnmanagedCertList"
+                  details:
+                    type: array
+                    items:
+                      type: object
+                      additionalProperties:
+                        type: string
+                    example:
+                      [
+                        {
+                          "Certificate.keystore::2": "ENTER_THE_PASSWORD",
+                          "www.managengine.com.keystore::8": "ENTER_THE_PASSWORD",
+                        },
+                      ]
+                  totalRows:
+                    type: integer
+                    example: 9
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  # 47. Import Unmanaged Certificates
+  /discoverUnmanagedCert:
+    get:
+      summary: Import Unmanaged Certificates
+      description: Import the unmanaged certificates of format JKS/PKCS fetched from a load balancer or shared path
+      operationId: discoverUnmanagedCert
+      parameters:
+        - name: uploadedFile
+          in: query
+          required: true
+          schema:
+            type: string
+            format: binary
+          description: A text file with certificate details and passwords
+      responses:
+        "200":
+          description: Certificates imported successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  Status:
+                    type: string
+                    example: "Success"
+                  Message:
+                    type: string
+                    example: "All certificates were imported successfully."
+                  ImportedCertificate:
+                    type: array
+                    items:
+                      type: string
+                    example:
+                      ["Certificate.keystore", "www.manageengine.com.keystore"]
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  # 48. Update SSL Additional Fields
+  /updateSSLAdditionalFields:
+    post:
+      summary: Update SSL Additional Fields
+      description: Update the existing additional fields associated with an SSL certificate
+      operationId: updateSSLAdditionalFields
+      parameters:
+        - name: INPUT_DATA
+          in: query
+          required: true
+          schema:
+            type: string
+          description: JSON string containing additional field details
+          example: '{"operation":{"Details":{"common_name":"mycert","serial_number":"fe1d1392618ae70c1065902a55d041ad","sslAdditionalFieldData":[{"ADDITIONALFIELDNAME":"Owner Name","ADDITIONALFIELDVALUE":"John"},{"ADDITIONALFIELDNAME":"dropdown","ADDITIONALFIELDVALUE":"option2"}]}}}'
+      responses:
+        "200":
+          description: Additional fields updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: object
+                    properties:
+                      message:
+                        type: string
+                        example: "Additional field details updated successfully for mycert"
+                      status:
+                        type: string
+                        example: "Success"
+                  name:
+                    type: string
+                    example: "updateSSLAdditionalFields"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
