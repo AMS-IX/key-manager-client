@@ -39,9 +39,25 @@ func main() {
         os.Exit(1)
     }
 
-    if cfg.Token == "" || cfg.Endpoint == "" || cfg.CommonName == "" || cfg.SerialNumber == "" || cfg.KeyFile == "" || cfg.CerFile == "" {
-        fmt.Println("Config file must contain 'endpoint', 'token', 'common_name', 'serial_number', 'key_file', and 'cer_file' values")
+    if cfg.Token == "" || cfg.Endpoint == "" || cfg.CommonName == "" || cfg.KeyFile == "" || cfg.CerFile == "" {
+        fmt.Println("Config file must contain 'endpoint', 'token', 'common_name', 'key_file', and 'cer_file' values")
         os.Exit(1)
+    }
+
+    ic, err := client.NewClient(cfg.Endpoint, cfg.Token, cfg.CommonName)
+    if err != nil {
+        fmt.Printf("Failed to create API client: %v\n", err)
+        os.Exit(1)
+    }
+
+    if cfg.SerialNumber == "" {
+        serialNumber, err := ic.GetSerialNumber(cfg.CommonName)
+        if err != nil {
+            fmt.Printf("Failed to get serial number: %v\n", err)
+            fmt.Println("Please provide a serial number in the config file or check the server has a certificate avilable for the given Common Name")
+            os.Exit(1)
+        }
+        cfg.SerialNumber = serialNumber
     }
 
     c, err := client.NewClient(cfg.Endpoint, cfg.Token, cfg.CommonName, cfg.SerialNumber)
