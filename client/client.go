@@ -98,14 +98,43 @@ func (c *Client) GetSerialNumber(commonName string) (string, error) {
     return latestSerialNumber, nil
 }
 
-// DownloadKey downloads the certificate key using the Key Manager REST API.
 func (c *Client) DownloadKey() ([]byte, error) {
     return c.downloadCertificate("KEY")
 }
 
-// DownloadPEM downloads the certificate PEM using the Key Manager REST API.
 func (c *Client) DownloadCER() ([]byte, error) {
-    return c.downloadCertificate("CER")
+    pemDataBytes, err := c.downloadCertificate("PEM")
+    if err != nil {
+        return nil, err
+    }
+    pemString := string(pemDataBytes)
+
+    var certificates []string
+    lines := strings.Split(pemString, "\n")
+    var currentCert strings.Builder
+    inCert := false
+    
+    for _, line := range lines {
+        if strings.Contains(line, "-----BEGIN CERTIFICATE-----") {
+            inCert = true
+            currentCert.Reset()
+        }
+        
+        if inCert {
+            currentCert.WriteString(line + "\n")
+        }
+        
+        if strings.Contains(line, "-----END CERTIFICATE-----") {
+            inCert = false
+            certificates = append(certificates, currentCert.String())
+        }
+    }
+    
+    if len(certificates) == 0 {
+        return nil, errors.New("no certificates found in PEM data")
+    }
+    
+    return []byte(strings.Join(certificates, "")), nil
 }
 
 func (c *Client) downloadCertificate(fileType string) ([]byte, error) {
